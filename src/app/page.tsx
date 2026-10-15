@@ -73,9 +73,25 @@ async function ProtectedDashboard() {
 
   const { data, error } = await supabase.auth.getClaims();
 
-  if (error || !data?.claims) {
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const userEmail =
+    typeof data?.claims?.email === "string"
+      ? data.claims.email.trim().toLowerCase()
+      : "";
+
+  if (
+    error ||
+    !data?.claims ||
+    !adminEmail ||
+    !userEmail ||
+    userEmail !== adminEmail
+  ) {
     redirect("/login");
   }
+
+
+ 
+  
   return (
     <div className="min-h-screen md:flex">
       <aside className="flex w-full flex-col bg-[#101a36] text-white md:min-h-screen md:w-64">
