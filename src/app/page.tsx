@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/layout/logout-button";
+import { getDashboardSummary } from "@/lib/crm-data";
 import {
   ArrowUpRight,
   Bell,
@@ -18,32 +19,15 @@ import {
   Users,
 } from "lucide-react";
 
-const stats = [
-  {
-    label: "Total revenue",
-    value: "₦0.00",
-    note: "No sales recorded yet",
-    icon: CircleDollarSign,
-  },
-  {
-    label: "Orders",
-    value: "0",
-    note: "Orders will appear here",
-    icon: ShoppingBag,
-  },
-  {
-    label: "Customers",
-    value: "0",
-    note: "Your customer base",
-    icon: Users,
-  },
-  {
-    label: "Products",
-    value: "0",
-    note: "Your product catalogue",
-    icon: Boxes,
-  },
-];
+
+function formatNaira(amount: number) {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
 
 const navigation = [
   { label: "Overview", icon: LayoutDashboard, active: true },
@@ -88,10 +72,36 @@ async function ProtectedDashboard() {
   ) {
     redirect("/login");
   }
+  const summary = await getDashboardSummary();
+
+const stats = [
+  {
+    label: "Total revenue",
+    value: formatNaira(summary.paidRevenue),
+    note: "Revenue from paid orders",
+    icon: CircleDollarSign,
+  },
+  {
+    label: "Orders",
+    value: summary.orders.toLocaleString("en-NG"),
+    note: "Total orders recorded",
+    icon: ShoppingBag,
+  },
+  {
+    label: "Customers",
+    value: summary.customers.toLocaleString("en-NG"),
+    note: "Registered customers",
+    icon: Users,
+  },
+  {
+    label: "Products",
+    value: summary.products.toLocaleString("en-NG"),
+    note: "Products in your catalogue",
+    icon: Boxes,
+  },
+];
 
 
- 
-  
   return (
     <div className="min-h-screen md:flex">
       <aside className="flex w-full flex-col bg-[#101a36] text-white md:min-h-screen md:w-64">
