@@ -1,6 +1,9 @@
 
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import LogoutButton from "@/components/layout/logout-button";
 import {
-  ArrowDownRight,
   ArrowUpRight,
   Bell,
   Boxes,
@@ -53,12 +56,33 @@ const navigation = [
 
 export default function DashboardPage() {
   return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading dashboard...
+        </div>
+      }
+    >
+      <ProtectedDashboard />
+    </Suspense>
+  );
+}
+
+async function ProtectedDashboard() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.getClaims();
+
+  if (error || !data?.claims) {
+    redirect("/login");
+  }
+  return (
     <div className="min-h-screen md:flex">
       <aside className="flex w-full flex-col bg-[#101a36] text-white md:min-h-screen md:w-64">
         <div className="border-b border-white/10 px-6 py-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#7546e8] font-bold">
-              CC
+              CM
             </div>
             <div>
               <p className="font-semibold">Cogent CRM</p>
@@ -128,6 +152,7 @@ export default function DashboardPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9e1ff] font-semibold text-[#6035cf]">
               A
             </div>
+            <LogoutButton />
           </div>
         </header>
 
