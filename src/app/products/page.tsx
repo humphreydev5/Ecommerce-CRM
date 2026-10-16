@@ -53,12 +53,14 @@ export default async function ProductsPage({
     throw new Error("Unable to load products. Please try again.");
   }
 
-  const formatCurrency = (amount: number | string) =>
-    new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      maximumFractionDigits: 2,
-    }).format(Number(amount));
+    const formatCurrency = (amount: number | string) => {
+    return new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(Number(amount) || 0);
+    };
 
   return (
     <main className="min-h-screen bg-slate-50 p-4 text-slate-900 sm:p-8">

@@ -137,11 +137,11 @@ const stats = [
 
         <div className="hidden border-t border-white/10 p-3 md:block">
           <a
-            href="#"
+            href="/settings"
             className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-slate-300 hover:bg-white/10"
           >
             <Settings size={18} />
-            Settings
+            Business Settings
           </a>
         </div>
       </aside>
